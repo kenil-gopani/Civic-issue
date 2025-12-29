@@ -9,6 +9,8 @@
 [![Status](https://img.shields.io/badge/Status-MVP%20Ready-success?style=for-the-badge)](/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
+### 🌐 [**Live Demo →**](https://civic-cf6bf.web.app/)
+
 ---
 
 ## 📋 Problem Statement
