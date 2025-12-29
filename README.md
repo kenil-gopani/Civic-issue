@@ -9,7 +9,7 @@
 [![Status](https://img.shields.io/badge/Status-MVP%20Ready-success?style=for-the-badge)](/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-### 🌐 [**Live Demo →**](https://civic-cf6bf.web.app/)
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Visit%20Now-ff6b6b?style=for-the-badge&logoColor=white)](https://civic-cf6bf.web.app/)
 
 ---
 
