@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CivicLens - AI-Powered Civic Issue Detection Platform">
+    <title>CivicLens | AI-Powered Civic Issue Detection</title>
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?v=3">
+    <!-- Leaflet Maps (FREE - No API Key Required) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Firebase SDK for Database -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2" />
+                    <path d="M20 8V20L28 28" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <circle cx="20" cy="20" r="3" fill="currentColor" />
+                </svg>
+                <span>CivicLens</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#analyze" class="nav-link">Analyze</a></li>
+                <li><a href="#map" class="nav-link">Map</a></li>
+                <li><a href="#insights" class="nav-link">Insights</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle"
+                aria-label="Toggle menu"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background">
+            <div class="hero-gradient"></div>
+            <div class="hero-pattern"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge"><span class="badge-icon">🚀</span><span>AI-Powered Civic Intelligence</span></div>
+            <h1 class="hero-title">Transform Civic Complaints into <span class="gradient-text">Actionable
+                    Insights</span></h1>
+            <p class="hero-description">CivicLens uses Google AI to analyze civic issues, detect sentiment, prioritize
+                urgency, and visualize problem hotspots.</p>
+            <div class="hero-cta">
+                <a href="#analyze" class="btn btn-primary"><span>Start Analyzing</span></a>
+                <a href="#problem" class="btn btn-secondary">Learn More</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="value-number stat-number" id="totalIssues">0</span>
+                    <span class="stat-label">Issues Reported</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="98">0</span>
+                    <span class="stat-label">% AI Accuracy</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="heroCityCount" data-count="1">0</span>
+                    <span class="stat-label">Cities Active</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem-section" id="problem">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">The Problem</span>
+                <h2 class="section-title">Civic Issues Need Smarter Solutions</h2>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">📑</div>
+                    <h3>Scattered Data</h3>
+                    <p>Complaints from multiple channels with no unified view.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">⏰</div>
+                    <h3>Delayed Response</h3>
+                    <p>Without prioritization, urgent issues get buried.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">📉</div>
+                    <h3>No Insights</h3>
+                    <p>Raw complaints don't reveal trends or patterns.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🗺️</div>
+                    <h3>Missing Context</h3>
+                    <p>Location data is often underutilized.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analyze Section -->
+    <section class="analyze-section" id="analyze">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">AI Analysis</span>
+                <h2 class="section-title">Report & Analyze Civic Issues</h2>
+                <p class="section-description">Enter your civic complaint and let Google Gemini AI analyze it instantly.
+                </p>
+            </div>
+            <div class="analyze-container">
+                <div class="input-panel glass-card">
+                    <form id="complaintForm" class="complaint-form">
+                        <div class="form-group">
+                            <label for="complaintText" class="form-label"><span class="label-icon">📝</span> Describe
+                                the Issue</label>
+                            <textarea id="complaintText" class="form-textarea"
+                                placeholder="Example: There's a large pothole on Main Street..." rows="5"
+                                required></textarea>
+                            <span class="char-count"><span id="charCount">0</span>/500</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="locationInput" class="form-label"><span class="label-icon">📍</span> Your
+                                Location</label>
+                            <div class="location-input-wrapper">
+                                <input type="text" id="locationInput" class="form-input"
+                                    placeholder="Click GPS button to detect..." readonly>
+                                <button type="button" id="detectGpsBtn" class="gps-btn" title="Detect my GPS location">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        width="20" height="20">
+                                        <circle cx="12" cy="12" r="3" />
+                                        <path d="M12 2v4m0 12v4M2 12h4m12 0h4" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <input type="hidden" id="userLat" value="">
+                            <input type="hidden" id="userLng" value="">
+                        </div>
+                        <!-- Cooldown Warning -->
+                        <div id="cooldownWarning" class="cooldown-warning" style="display: none;">
+                            <span class="cooldown-icon">⏳</span>
+                            <span class="cooldown-text">You can submit another complaint in <strong
+                                    id="cooldownTime">--</strong></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg btn-full" id="analyzeBtn">
+                            <span class="btn-text">Analyze with AI</span>
+                            <span class="btn-loader"><svg class="spinner" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"
+                                        stroke-dasharray="60" />
+                                </svg></span>
+                        </button>
+                    </form>
+                    <div class="sample-complaints">
+                        <span class="sample-label">Try a sample:</span>
+                        <div class="sample-chips">
+                            <button class="sample-chip" data-sample="pothole">🛣️ Pothole</button>
+                            <button class="sample-chip" data-sample="streetlight">💡 Streetlight</button>
+                            <button class="sample-chip" data-sample="garbage">🗑️ Garbage</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="results-panel glass-card" id="resultsPanel">
+                    <div class="results-placeholder" id="resultsPlaceholder">
+                        <div class="placeholder-icon">🔍</div>
+                        <h3>AI Analysis Results</h3>
+                        <p>Submit a complaint to see AI-powered insights.</p>
+                    </div>
+                    <div class="results-content" id="resultsContent" style="display: none;">
+                        <div class="results-header">
+                            <h3>Analysis Complete</h3><span class="results-time" id="analysisTime"></span>
+                        </div>
+                        <div class="result-cards">
+                            <div class="result-card">
+                                <div class="result-card-header"><span class="result-icon">🏷️</span><span
+                                        class="result-label">Category</span></div>
+                                <div class="result-value" id="resultCategory">--</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-card-header"><span class="result-icon">💭</span><span
+                                        class="result-label">Sentiment</span></div>
+                                <div class="result-value"><span class="sentiment-badge" id="resultSentiment">--</span>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-card-header"><span class="result-icon">⚡</span><span
+                                        class="result-label">Urgency</span></div>
+                                <div class="urgency-meter">
+                                    <div class="urgency-bar" id="urgencyBar"></div><span class="urgency-text"
+                                        id="resultUrgency">--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-summary">
+                            <div class="summary-header"><span class="summary-icon">🤖</span><span>AI Summary</span>
+                            </div>
+                            <p class="summary-text" id="resultSummary">--</p>
+                        </div>
+                        <div class="recommendations">
+                            <div class="recommendations-header"><span>💡 Recommended Actions</span></div>
+                            <ul class="recommendations-list" id="resultRecommendations"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section" id="map">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Visualization</span>
+                <h2 class="section-title">Issue Hotspot Map</h2>
+            </div>
+            <div class="map-container glass-card">
+                <div class="map-controls">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="infrastructure">🛣️ Infrastructure</button>
+                    <button class="filter-btn" data-filter="safety">🚨 Safety</button>
+                    <button class="filter-btn" data-filter="sanitation">🗑️ Sanitation</button>
+                </div>
+                <div id="issueMap" class="issue-map"></div>
+                <div class="map-fallback" id="mapFallback" style="display: none;">
+                    <div class="fallback-content">
+                        <span class="fallback-icon">🗺️</span>
+                        <h3>Map Preview Mode</h3>
+                        <p>Add Google Maps API key to enable interactive maps.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics Dashboard Section -->
+    <section class="insights-section" id="insights">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">📊 Analytics</span>
+                <h2 class="section-title">Real-Time Issue Dashboard</h2>
+                <p class="section-description">Live tracking of civic issues and trends in your area</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-header"><span class="insight-icon">📝</span>
+                        <h3>Total Issues</h3>
+                    </div>
+                    <div class="insight-value"><span class="value-number" id="totalIssues">0</span></div>
+                    <div class="insight-trend" id="totalTrend">Submit to start tracking</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-header"><span class="insight-icon">🔥</span>
+                        <h3>Most Common</h3>
+                    </div>
+                    <div class="insight-value"><span class="value-number" id="topCategory"
+                            style="font-size: 1.5rem;">--</span></div>
+                    <div class="insight-trend" id="topCategoryCount">No data yet</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-header"><span class="insight-icon">🚨</span>
+                        <h3>Critical Issues</h3>
+                    </div>
+                    <div class="insight-value"><span class="value-number" id="criticalCount">0</span></div>
+                    <div class="insight-trend" id="criticalTrend">Needs immediate attention</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-header"><span class="insight-icon">🎯</span>
+                        <h3>AI Accuracy</h3>
+                    </div>
+                    <div class="insight-value"><span class="value-number">98</span><span class="value-unit">%</span>
+                    </div>
+                    <div class="insight-trend">Powered by Gemini</div>
+                </div>
+            </div>
+
+            <!-- Category Distribution Chart -->
+            <div class="analytics-chart glass-card">
+                <div class="chart-header">
+                    <h3>📈 Issue Category Distribution</h3>
+                    <button class="btn btn-secondary btn-sm" id="clearAnalytics">Clear Data</button>
+                </div>
+                <div class="category-bars" id="categoryBars">
+                    <div class="category-bar-item">
+                        <span class="category-label">🛣️ Infrastructure</span>
+                        <div class="category-bar-track">
+                            <div class="category-bar-fill" id="bar-infrastructure" style="width: 0%"></div>
+                        </div>
+                        <span class="category-count" id="count-infrastructure">0</span>
+                    </div>
+                    <div class="category-bar-item">
+                        <span class="category-label">🚨 Safety</span>
+                        <div class="category-bar-track">
+                            <div class="category-bar-fill" id="bar-safety" style="width: 0%"></div>
+                        </div>
+                        <span class="category-count" id="count-safety">0</span>
+                    </div>
+                    <div class="category-bar-item">
+                        <span class="category-label">🗑️ Sanitation</span>
+                        <div class="category-bar-track">
+                            <div class="category-bar-fill" id="bar-sanitation" style="width: 0%"></div>
+                        </div>
+                        <span class="category-count" id="count-sanitation">0</span>
+                    </div>
+                    <div class="category-bar-item">
+                        <span class="category-label">💡 Utilities</span>
+                        <div class="category-bar-track">
+                            <div class="category-bar-fill" id="bar-utilities" style="width: 0%"></div>
+                        </div>
+                        <span class="category-count" id="count-utilities">0</span>
+                    </div>
+                    <div class="category-bar-item">
+                        <span class="category-label">🔊 Noise</span>
+                        <div class="category-bar-track">
+                            <div class="category-bar-fill" id="bar-noise" style="width: 0%"></div>
+                        </div>
+                        <span class="category-count" id="count-noise">0</span>
+                    </div>
+                    <div class="category-bar-item">
+                        <span class="category-label">📦 Other</span>
+                        <div class="category-bar-track">
+                            <div class="category-bar-fill" id="bar-other" style="width: 0%"></div>
+                        </div>
+                        <span class="category-count" id="count-other">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Issues Feed -->
+            <div class="recent-issues glass-card">
+                <h3>🕐 Recent Issues</h3>
+                <div class="issues-feed" id="issuesFeed">
+                    <p class="feed-empty">No issues reported yet. Submit your first complaint above!</p>
+                </div>
+            </div>
+
+            <div class="impact-statement glass-card">
+                <h3>🌟 Making Cities Smarter, One Complaint at a Time</h3>
+                <p>CivicLens empowers local authorities with AI-driven insights to prioritize issues and build more
+                    responsive communities.</p>
+                <div class="tech-badges">
+                    <span class="tech-badge">Google Gemini</span>
+                    <span class="tech-badge">OpenStreetMap</span>
+                    <span class="tech-badge">Firebase</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand"><span class="footer-logo">CivicLens</span>
+                    <p>AI-Powered Civic Issue Detection</p>
+                </div>
+                <div class="footer-links"><a href="#home">Home</a><a href="#analyze">Analyze</a><a href="#map">Map</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CivicLens. Built for Google AI Hackathon.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js?v=6"></script>
+    <script src="js/gemini.js?v=6"></script>
+    <script src="js/maps.js?v=6"></script>
+    <script src="js/analytics.js?v=6"></script>
+    <script src="js/database.js?v=6"></script>
+    <script src="js/app.js?v=6"></script>
+</body>
+
+</html>

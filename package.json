@@ -1,0 +1,27 @@
+{
+    "name": "civiclens",
+    "version": "1.0.0",
+    "description": "AI-Powered Civic Issue Detection Platform",
+    "main": "public/index.html",
+    "scripts": {
+        "serve": "npx serve public -l 3000",
+        "deploy": "firebase deploy",
+        "deploy:hosting": "firebase deploy --only hosting"
+    },
+    "keywords": [
+        "civic",
+        "ai",
+        "google-gemini",
+        "google-maps",
+        "firebase",
+        "hackathon"
+    ],
+    "author": "CivicLens Team",
+    "license": "MIT",
+    "devDependencies": {
+        "firebase-tools": "^13.0.0"
+    },
+    "dependencies": {
+        "git": "^0.1.5"
+    }
+}

@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Complaints collection - allow public read/write for demo
+    match /complaints/{complaintId} {
+      // Allow anyone to create and read complaints (for hackathon demo)
+      allow read, create: if true;
+      
+      // Disallow updates and deletes for security
+      allow update, delete: if false;
+    }
+    
+    // Analytics collection (read-only for public)
+    match /analytics/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
