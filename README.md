@@ -9,6 +9,8 @@
 [![Status](https://img.shields.io/badge/Status-MVP%20Ready-success?style=for-the-badge)](/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
+## Live App Link
+
 [![Live Demo](https://img.shields.io/badge/LIVE_DEMO-VIEW_PROJECT-00E676?style=for-the-badge&logo=firebase&logoColor=white&labelColor=121212)](https://civic-cf6bf.web.app/)
 ---
 
@@ -244,6 +246,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [⭐ Star this repo](https://github.com/kenil-gopani/Civic-issue) • [🐛 Report Bug](https://github.com/kenil-gopani/Civic-issue/issues) • [💡 Request Feature](https://github.com/kenil-gopani/Civic-issue/issues)
 
 </div>
+
 
 
 
